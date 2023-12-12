@@ -47,13 +47,13 @@
 						url:"/login/logo.png",
 					},{
 						id:1,
-						url:"/login/logo.png",
+						url:"/login/00117-1458793157.png",
 					},{
 						id:2,
-						url:"/login/logo.png",
+						url:"/login/00268-3549298267.jpeg",
 					},{
 						id:3,
-						url:"/login/logo.png",
+						url:"/login/QQ截图20230519133931.png",
 					},
 				]
 			}
@@ -68,7 +68,7 @@
 					if(this.currentIndex > this.imgArr.length-1){
 						this.currentIndex = 0
 					}
-				},3000)
+				},5000)
 			},
 			// 点击左右箭头
 			clickIcon(val){
@@ -122,11 +122,13 @@ li {
 	list-style-type: none;
 }
 .showImg{
-	position: relative;
+	position: absolute;
 	width: 40%;
 	height: 250px;
 	margin: 100px auto;
 	overflow: hidden;
+	left: 100px;
+	top: -150px;
 }
 /* 轮播图片 */
 .showImg img{
@@ -185,14 +187,18 @@ li {
 }
 
 	/* 进入的起点、离开的终点 */
-	.hello-enter,.hello-leave-to{
-		transform: translateX(-50%);
+	.hello-enter{
+		transform: translateX(-100%);
+	}
+	.hello-leave-to{
+		transform: translateX(100%);
 	}
 	.hello-enter-active,.hello-leave-active{
-		transition: 0.5s linear;
+		transition: 1s linear;
 	}
 	/* 进入的终点、离开的起点 */
 	.hello-enter-to,.hello-leave{
-		transform: translateX(50%);
+		transform: translateX(0%);
 	}
+	
 </style>
