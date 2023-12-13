@@ -1,8 +1,9 @@
 <template>
     <div>
     <homeTop></homeTop>
-    <homeAside></homeAside>
-    <homeBody/>
+    <homeAside @toFileEvent= "tofile"> </homeAside>
+    <!-- <router-view></router-view> -->
+    <homeBody></homeBody>
     </div>
 </template>
 
@@ -10,14 +11,26 @@
 <script>
 import homeTop from './homeTop.vue';
 import homeAside from './homeAside.vue';
-import homeBody from './homeBody.vue'
+import homeBody from './homeBody.vue';
   export default {
-    name: 'MyHomeTop',
+    name: 'MyHome',
     data : function(){
       return {
       }
     },
-    components : { homeTop,homeAside,homeBody}
+    methods :{
+      tofile(){
+        alert(2)
+        if (this.$route.path !== '/home/files') {
+          this.$router.push({
+          name : "myFiles",
+        })
+        
+
+      }
+    }
+    },
+    components : { homeTop, homeAside,homeBody}
   }
 
 
@@ -25,5 +38,12 @@ import homeBody from './homeBody.vue'
 
 
 <style>
-
+  .homeBody{
+    position: absolute;
+    top:200px;
+    right: 50px;
+    width: 1600px;
+    height: 800px;
+    background-color: aqua;
+  }
 </style>

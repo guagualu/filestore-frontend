@@ -15,13 +15,15 @@
 
 
 <script>
+import { RouterView } from 'vue-router';
+
   export default {
-    name: 'MyHomeTop',
-    data : function(){
-      return {
-      }
+    name: "MyHomeTop",
+    data: function () {
+        return {};
     },
-  }
+    components: { RouterView }
+}
 
 </script>
 

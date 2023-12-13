@@ -17,7 +17,7 @@
       <carouselChart/>
     </div>
   </div>
-  <div  v-show = "$route.path =='/home'">
+  <div  v-show = "$route.path =='/home'|$route.path === '/home/files'">
     <router-view></router-view>
   </div>
   </div>
@@ -30,16 +30,12 @@ import carouselChart from './carouselChart.vue'
     name: 'MyLogin',
     data : function(){
       return {
-        inLogin : true,
         loginPhone : null,
         loginPsd : ""
       }
     },
     methods : {
        login(){
-        console.log(this)
-        this.inLogin = false
-        console.log(this)
         if (this.$route.path !== '/home') {
           this.$router.push({
           name : "home",
