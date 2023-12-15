@@ -1,7 +1,6 @@
 <template>
     <div class="homeBody">
-      <homeAsideAside/>
-      <RouterView></RouterView>
+      <RouterView name = "inBody"></RouterView>
     </div>
 
 </template>
@@ -9,9 +8,7 @@
 
 <script>
 import { RouterView } from 'vue-router';
-import fileHome from './files/fileHome.vue';
 
-import homeAsideAside from './homeAsideAside.vue';
  export default {
    name: 'MyHomeBody',
    data : function(){
@@ -19,8 +16,6 @@ import homeAsideAside from './homeAsideAside.vue';
      }
    },
    components : {
-    fileHome,
-    homeAsideAside
 }
  }
 
@@ -29,12 +24,14 @@ import homeAsideAside from './homeAsideAside.vue';
 
 <style scoped>
   .homeBody{
-    position: absolute;
-    top:200px;
+    position: relative;
+    float: right;
+    /* top:200px; */
+    margin-top: 100px;
     right: 50px;
-    width: 1600px;
+    width: 65%;
     height: 800px;
-    background-color: aqua;
+    background-color: rgb(0, 17, 255);
   }
 
 </style>

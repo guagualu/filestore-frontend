@@ -1,6 +1,17 @@
 <template>
     <div class="homeAside">
-       <homeAsideAside @hoemAsideToFile="hoemAsideToFile"/> 
+      <div class="homeLeftAside">
+        <div class="index" @click="toIndex">
+            首页
+        </div>
+
+        <div class="im" @click="toIm">
+            消息
+        </div>
+        
+
+    </div>
+       <RouterView name="inAside"/>
 
     </div>
 
@@ -8,7 +19,8 @@
 
 
 <script>
-import homeAsideAside from './homeAsideAside.vue';
+import { RouterView } from 'vue-router';
+import homeAsideAside from './homeIndexAside.vue';
  export default {
    name: 'MyHomeAside',
    data : function(){
@@ -17,11 +29,22 @@ import homeAsideAside from './homeAsideAside.vue';
    },
    components : {
     homeAsideAside,
-   },
+    RouterView
+},
    methods: {
-    hoemAsideToFile(){
-      alert(1)
-      this.$emit("toFileEvent")
+    toIndex(){
+      if (this.$route.path !== '/home/index') {
+          this.$router.push({
+          name : "index",
+        })
+        }
+    },
+    toIm(){
+      if (this.$route.path !== '/home/im') {
+          this.$router.push({
+          name : "im",
+        })
+        }
     }
    }
  }
@@ -31,12 +54,23 @@ import homeAsideAside from './homeAsideAside.vue';
 
 <style scoped>
   .homeAside{
-    position: absolute;
-    top:200px;
+    position: relative;
+    float: left;
+    margin-top: 100px;
     left: 25px;
-    width: 400px;
+    width: 25%;
     height: 800px;
-    background-color: aqua;
+    background-color: rgb(140, 61, 160);
   }
+
+  .homeLeftAside{
+    position: absolute;
+    top:20px;
+    left: 25px;
+    width: 150px;
+    height: 780px;
+    background-color: rgb(51, 167, 76);
+  }
+
 
 </style>

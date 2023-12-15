@@ -1,7 +1,11 @@
 <template>
     <div class="homeAsideAside">
-        <div class="fileLink" @click="toFile">
-            我的文件
+        <div class="sessionLink" @click="toSession">
+            会话
+        </div>
+
+        <div class="friendListLink" @click="toFriendList">
+            通讯录
         </div>
 
 
@@ -14,22 +18,28 @@
 import { RouterLink } from 'vue-router';
 
  export default {
-    name: "MyHomeAsideAside",
+    name: "MyHomeImAside",
     data: function () {
         return {};
     },
     methods : {
-        toFile(){
+        toSession(){
         // this.$emit("hoemAsideToFile")
-        if (this.$route.path !== '/home/files') {
+        if (this.$route.path !== '/home/im/session') {
           this.$router.push({
-          name : "myFiles",
+          name : "session",
         })
         }
 
         
     },
-    components: { RouterLink }
+    toFriendList(){
+      if (this.$route.path !== '/home/im/addrBook') {
+          this.$router.push({
+          name : "addrBook",
+        })
+        }
+    }
    }
 }
 
@@ -42,7 +52,7 @@ import { RouterLink } from 'vue-router';
     position: absolute;
     top:20px;
     right: 25px;
-    width: 150px;
+    width: 45%;
     height: 780px;
     background-color: rgb(109, 48, 73);
   }

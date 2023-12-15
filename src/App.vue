@@ -24,6 +24,6 @@ export default {
   text-align: center;
   color: #02070c;
   margin-top: 20px;
-  background-color: aqua;
+  /* background-color: aqua; */
 }
 </style>
