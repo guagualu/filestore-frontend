@@ -10,21 +10,24 @@
     </div>
     <div class="login-body">
       <div class="login-input">
-        <el-input v-model.number="loginPhone" placeholder="请输入手机号"></el-input>
+        <el-input v-model="loginPhone" placeholder="请输入手机号"></el-input>
         <el-input v-model="loginPsd" placeholder="请输入密码"></el-input>
-        <el-button class="login-submit" @click="login" type="primary" round>主要按钮</el-button>
+        <el-button class="login-submit" @click="login" type="primary" round>登录</el-button>
+        <RouterLink  class="toSignUp" active-class="active" to="/signUp">点此注册</RouterLink>
       </div>
       <carouselChart/>
     </div>
   </div>
-  <div  v-show = "$route.path.includes('home')">
+  <div  v-show = "$route.path.includes('home')||$route.path.includes('signUp')">
     <router-view></router-view>
   </div>
   </div>
   </template>
   
   <script>
-  import { RouterView } from 'vue-router'
+  import { RouterLink, RouterView } from 'vue-router'
+  import JwtService from '../pkg/jwt.js'
+  import axios from 'axios';
 import carouselChart from './carouselChart.vue'
   export default {
     name: 'MyLogin',
@@ -36,12 +39,28 @@ import carouselChart from './carouselChart.vue'
     },
     methods : {
        login(){
-        if (this.$route.path !== '/home/index') {
+        let formData = {
+         "mobile" : this.loginPhone,
+         "user_password" : this.loginPsd,
+}
+        console.log(formData)
+        axios.post('/user/signIn', formData)
+        .then(response => {
+          console.log(response.data);
+          // 处理上传成功的逻辑
+          JwtService.saveToken(response.data.data)
+          if (this.$route.path !== '/home/index') {
           this.$router.push({
           name : "index",
           
         })
       }
+        })
+        .catch(error => {
+          console.error(error);
+          return;
+          // 处理上传失败的逻辑
+        });
 
 }
         
@@ -50,7 +69,7 @@ import carouselChart from './carouselChart.vue'
     props: {
       msg: String
     },
-    components:{ carouselChart, RouterView }
+    components:{ carouselChart, RouterView, RouterLink }
   }
   </script>
   
