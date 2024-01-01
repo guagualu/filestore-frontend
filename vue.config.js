@@ -29,6 +29,10 @@ module.exports = defineConfig({
                 target: 'http://localhost:8084',
                 changeOrigin: true,
                 pathRewrite: { '^/uf': '/user-file' }
+            },
+            '/oss': {
+                target: 'http://file-store-gua.oss-cn-chengdu.aliyuncs.com',
+                changeOrigin: true,
             }
         }
     }
