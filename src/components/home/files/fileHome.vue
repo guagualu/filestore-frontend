@@ -20,7 +20,7 @@
       <em>点击上传</em>
     </div>
   </el-upload>
-  <el-button class = "multiDelete" @click="retrySplitUpload()"  type="primary" v-if="ifRetry" round>重试</el-button>
+  <el-button class = "multiDelete" @click="retrySplitUpload"  type="primary" v-if="ifRetry" round>重试</el-button>
   <el-progress type="circle" :percentage="progress" class="progress" v-if="showProgress"></el-progress>
 
     <el-button class = "multiDelete"   type="primary" round>批量删除</el-button>
@@ -104,7 +104,9 @@ import { v4 as uuidv4 } from 'uuid'
         uploadId : {},
         chunkCount: {},
         onProgress:{},
-        onSuccess : {}
+        onSuccess : {},
+        fileName : {},
+        file : {},
       }
       }
     },
@@ -221,13 +223,22 @@ import { v4 as uuidv4 } from 'uuid'
           : (size / 1024).toFixed(2) + "KB"
         : size.toFixed(2) + "B";
     },
-    retrySplitUpload(fileHash,fileSize,uploadId,chunkCount,onProgress,onSuccess) {
+    async retrySplitUpload() {
+      let fileHash =this.retry.fileHash;
+      let fileSize = this.retry.fileSize;
+      let uploadId = this.retry.uploadId;
+      let chunkCount = this.retry.chunkCount;
+      let onProgress =this.retry.onProgress;
+      let onSuccess = this.retry.onSuccess;
+      let fileName = this.retry.fileName;
+      let file = this.retry.file;
       //init 获取失败的chunkIndex
       const vc =this;
       const initformData = new FormData();
       initformData.append("upload_id",uploadId);
-      initformData.append('chunkCount',chunkCount);
-       axios.post('/file/upload/retry/init', initformData,{
+      initformData.append('chunk_count',chunkCount);
+      let retryfileChunks;
+      await axios.post('/file/upload/retry/init', initformData,{
         headers : {
           "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
         }
@@ -236,7 +247,11 @@ import { v4 as uuidv4 } from 'uuid'
           console.log(response.data);
           // 处理上传成功的逻辑
           //重新走
-          let fileChunks = response.data.chunk_index_array
+          retryfileChunks = response.data.data.chunk_index_array
+        }).catch(error => {
+          console.error(error);
+          // 处理上传失败的逻辑
+        });
           //这里异步请求completed
        var timer = null;
        timer=setInterval(function(){
@@ -245,6 +260,7 @@ import { v4 as uuidv4 } from 'uuid'
         formData.append("upload_id",uploadId);
         formData.append("file_size",fileSize);
         formData.append("chunk_count",chunkCount);
+        formData.append("file_name",fileName)
         formData.append('user_uuid',"41e32018-8fd1-41f3-8b6a-d5ec340362ab");
        axios.post('/file/upload/completed', formData,{
         headers : {
@@ -255,12 +271,12 @@ import { v4 as uuidv4 } from 'uuid'
           console.log(response.data);
           // 处理上传成功的逻辑
           //如果完成了
-          if(response.data.Completed){
-             onSuccess
+          if(response.data.data.completed){
+             onSuccess;
              vc.showProgress = false
              clearInterval(timer)
           }else{
-            this.progress= response.data.Progress
+            vc.progress= response.data.data.progress
           }
         })
         .catch(error => {
@@ -269,15 +285,18 @@ import { v4 as uuidv4 } from 'uuid'
           clearInterval(timer)
         });
        }, 1000)
-       for(let i =0;i<fileChunks.length;i++){
+       //进行文件切割
+       const fileChunks=this.splitFile(file,this.eachSize,Math.ceil(fileSize/this.multiUploadSize))
+       let mpUploadRes = true
+       for(let i =0;i<retryfileChunks.length;i++){
        let formData = new FormData();
-       formData.append("file",fileChunks[i]);
-       onProgress
-       axios.post('/file/upload/mp', formData,{
+       formData.append("file",fileChunks[retryfileChunks[i]-1]);
+       console.log(fileChunks,retryfileChunks,fileChunks[retryfileChunks[i]])
+       await axios.post('/file/upload/mp', formData,{
         headers : {
           "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
           "upload_id": uploadId,
-          "chunk_index" :  i+1,
+          "chunk_index" :  retryfileChunks[i],
           "content-Type" : "multipart/form-data"
         }
        })
@@ -291,16 +310,14 @@ import { v4 as uuidv4 } from 'uuid'
           mpUploadRes = false
         });
        }
+       
        if(mpUploadRes){
         this.ifRetry = false
         this.retry ={
         }
+       }else{
+        clearInterval(timer)
        }
-        })
-        .catch(error => {
-          console.error(error);
-          // 处理上传失败的逻辑
-        });
     },
     // 文件分块,利用Array.prototype.slice方法
     splitFile(file, eachSize, chunks) {
@@ -321,7 +338,7 @@ import { v4 as uuidv4 } from 'uuid'
       const formData = new FormData();
        formData.append("file",file);
        formData.append('user_uuid',"41e32018-8fd1-41f3-8b6a-d5ec340362ab");
-       onProgress
+       onProgress()
        let res =false
        await axios.post('/file/upload', formData,{
         headers : {
@@ -340,42 +357,12 @@ import { v4 as uuidv4 } from 'uuid'
         });
         return res
     },
-    uploadMpCompleted(fileHash,fileName,fileSize,uploadId,chunkCount,onSuccess){
-      const vc = this;
-       let formData = new FormData();
-       formData.append("file_hash",fileHash);
-        formData.append("upload_id",uploadId);
-        formData.append("file_size",fileSize);
-        formData.append("chunk_count",chunkCount);
-        formData.append('user_uuid',"41e32018-8fd1-41f3-8b6a-d5ec340362ab");
-       axios.post('/file/upload/completed', formData,{
-        headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
-        }
-       })
-        .then(response => {
-          console.log(response.data);
-          // 处理上传成功的逻辑
-          //如果完成了
-          if(response.data.completed){
-             onSuccess
-             this.progress = false
-             clearInterval(timer)
-          }else{
-            this.progress= response.data.progress
-          }
-        })
-        .catch(error => {
-          console.error(error);
-          // 处理上传失败的逻辑
-          clearInterval(timer)
-        });
-    },
       async uploadMpFile(file,fileHash,fileSize,onProgress,onSuccess){
         //调用mpinit
         //获得uploadId
         let uploadId = uuidv4()
         let chunkCount =Math.ceil(fileSize/this.multiUploadSize)
+        const vc =this ;
         await axios.get('/file/upload/mp/init', {
         params :{
           "file_hash" : fileHash,
@@ -420,11 +407,11 @@ import { v4 as uuidv4 } from 'uuid'
           console.log(response.data);
           // 处理上传成功的逻辑
           //如果完成了
-          if(response.data.Completed){
-             onSuccess
+          if(response.data.data.completed){
+             onSuccess;
              clearInterval(timer)
           }else{
-            this.progress= response.data.Progress
+            vc.progress= response.data.data.progress
           }
         })
         .catch(error => {
@@ -473,7 +460,7 @@ import { v4 as uuidv4 } from 'uuid'
           // 处理上传成功的逻辑
           //如果完成了
           if(response.data.Completed){
-             onSuccess
+             onSuccess()
           }else{
             this.progress= response.data.Progress
           }
@@ -481,6 +468,7 @@ import { v4 as uuidv4 } from 'uuid'
         .catch(error => {
           console.error(error);
           // 处理上传失败的逻辑
+          
         });
        if (!mpUploadRes){
         clearInterval(timer)        
@@ -492,7 +480,9 @@ import { v4 as uuidv4 } from 'uuid'
         uploadId : uploadId,
         chunkCount: chunkCount,
         onProgress: onProgress,
-        onSuccess : onSuccess
+        fileName : file.name ,
+        onSuccess : onSuccess,
+        file : file
       }
         return false
        }else{
