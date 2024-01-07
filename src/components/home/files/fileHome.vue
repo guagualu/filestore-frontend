@@ -9,6 +9,9 @@
     :auto-upload="true"
     :http-request="checkedFile"
     :limit="10"
+    :on-progress="handleFileUploadProgress"
+    :on-success="handleFileSuccess"
+    :on-error="handleFileError"
     action="/tools/upload_test/"
     >
   
@@ -23,15 +26,16 @@
   <el-button class = "multiDelete" @click="retrySplitUpload"  type="primary" v-if="ifRetry" round>重试</el-button>
   <el-progress type="circle" :percentage="progress" class="progress" v-if="showProgress"></el-progress>
 
-    <el-button class = "multiDelete"   type="primary" round>批量删除</el-button>
+    <el-button @click="multiDelete" class = "multiDelete"   type="primary" round>批量删除</el-button>
     <template>
     <el-table
       :data="fileTableData"
-      style="width: 100%"
       ref="multipleTable"
       tooltip-effect="dark"
+      size="mini" 
+      :row-style="rowStyle"
+      max-height="500px"
       @selection-change="handleSelectionChange">
-      >
       <el-table-column
       type="selection"
       width="55">
@@ -56,11 +60,35 @@
       width="48">
       <template slot-scope="scope">
         <el-button @click="downloadFile(scope.$index,scope.row)" type="text" size="small">下载</el-button>
-        <el-button type="text" size="small">删除</el-button>
-        <el-button type="text" size="small">编辑</el-button>
+        <el-button @click="deleteFile(scope.$index,scope.row)" type="text" size="small">删除</el-button>
+        <el-button type="text"  @click="dialogVisible = true;editingFile = scope.row" size="small" >编辑
+        </el-button>
+        <el-dialog
+  title="编辑"
+  :visible.sync="dialogVisible"
+  width="30%"
+  :append-to-body="true" 
+  >
+  <!-- 嵌套的对话框要加这个append-to-body -->
+  <el-form ref="editForm" :model="editForm" label-width="80px">
+  <el-form-item label="文件名字">
+    <el-input v-model="editForm.file_name"></el-input>
+    <el-button type="primary" @click="renameFile">立即提交</el-button>
+  </el-form-item>
+</el-form>
+</el-dialog>
       </template>
     </el-table-column>
     </el-table>
+    <div class="block">
+       <el-pagination
+          layout="prev, pager, next"
+          :total="filesTotal"
+          :page-size="10"
+          @current-change = "handleCurrentChange"
+          >
+        </el-pagination>
+</div>
   </template>
     </div>
 </template>
@@ -74,7 +102,12 @@ import { v4 as uuidv4 } from 'uuid'
     name: 'MyHomeFiles',
     data : function(){
       return {
+        dialogVisible : false, // 编辑对话框是否可见
+        editingFile : {},
         file : {},
+        editForm : {
+           file_name  : ""
+        },
         fileTableData : [
           {
             file_name : 'test1',
@@ -107,7 +140,11 @@ import { v4 as uuidv4 } from 'uuid'
         onSuccess : {},
         fileName : {},
         file : {},
-      }
+      },
+      rowStyle : {
+        'background-color': 'aqua',
+      },
+      filesTotal :50,
       }
     },
     components : {},
@@ -180,7 +217,6 @@ import { v4 as uuidv4 } from 'uuid'
         });
         this.showProgress = false;
         this.progress = 0;
-        onSuccess();
         }else{
         this.$message({
           message: e.message,
@@ -188,7 +224,7 @@ import { v4 as uuidv4 } from 'uuid'
         });
         this.showProgress = false;
         this.progress = 0;
-        onError();
+        onError
         }
       }else {  //分块
         console.log("multi",this)
@@ -200,7 +236,6 @@ import { v4 as uuidv4 } from 'uuid'
         });
         this.showProgress = false; 
         this.progress = 0;
-        onSuccess();
         }else{
         this.$message({
           message: e.message,
@@ -208,7 +243,7 @@ import { v4 as uuidv4 } from 'uuid'
         });
         this.showProgress = false;
         this.progress = 0;
-        onError();
+        onError
         }
       }
         
@@ -272,7 +307,6 @@ import { v4 as uuidv4 } from 'uuid'
           // 处理上传成功的逻辑
           //如果完成了
           if(response.data.data.completed){
-             onSuccess;
              vc.showProgress = false
              clearInterval(timer)
           }else{
@@ -338,7 +372,7 @@ import { v4 as uuidv4 } from 'uuid'
       const formData = new FormData();
        formData.append("file",file);
        formData.append('user_uuid',"41e32018-8fd1-41f3-8b6a-d5ec340362ab");
-       onProgress()
+       this.showProgress = true
        let res =false
        await axios.post('/file/upload', formData,{
         headers : {
@@ -387,7 +421,7 @@ import { v4 as uuidv4 } from 'uuid'
        //进行文件切割
        const fileChunks=this.splitFile(file,this.eachSize,Math.ceil(fileSize/this.multiUploadSize))
        //循环请求
-       let mpUploadRes = false 
+       let mpUploadRes = true
        //这里异步请求completed
        var timer = null;
        timer=setInterval(function(){
@@ -408,7 +442,6 @@ import { v4 as uuidv4 } from 'uuid'
           // 处理上传成功的逻辑
           //如果完成了
           if(response.data.data.completed){
-             onSuccess;
              clearInterval(timer)
           }else{
             vc.progress= response.data.data.progress
@@ -420,7 +453,7 @@ import { v4 as uuidv4 } from 'uuid'
           clearInterval(timer)
         });
        }, 1000)
-       onProgress
+       vc.showProgress = true
        for(let i =0;i<fileChunks.length;i++){
        let formData = new FormData();
        formData.append("file",fileChunks[i]);
@@ -460,7 +493,6 @@ import { v4 as uuidv4 } from 'uuid'
           // 处理上传成功的逻辑
           //如果完成了
           if(response.data.Completed){
-             onSuccess()
           }else{
             this.progress= response.data.Progress
           }
@@ -539,14 +571,149 @@ import { v4 as uuidv4 } from 'uuid'
         }
        })
         .then(response => {
-          //成功处理 请求阿里云的地址
-          window.location.href = response.data
-        })
+          //成功处理 
+          //如果是oss
+          if(response.data.data && response.data.data.store_type == "oss"){
+            window.location.href = response.data.data.url
+          }else{ //是本地
+            axios({
+       method: "post",
+       url: "/file/download",
+       responseType: "blob", //收到的数据为blob,
+       data : formData,
+       headers :{
+          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+        }
+     }).then(response => {
+            const blob = new Blob([response.data], { type: response.headers["content-type"] });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");//创建一个a标签
+            a.href = url;// 设置超链接的地址
+        /*
+后端设置的响应头，指定文件名和后缀名
+后端这里已经指定文件类型，也可前端设置
+         */
+//通过后端设置的响应头，获取文件名：
+            let fileName= response.headers["content-disposition"].split(";")[1].split("=")[1];
+//前端也可以设置下载文件的文件名：
+            fileName=fileName.substr(0, fileName.length - 1);
+            fileName=fileName.substr(1, fileName.length );
+//前端也可以设置下载文件的文件名：
+            a.download = fileName;
+            a.click()
+          }).catch(error => {
+          console.error(error);
+          // 处理上传失败的逻辑
+        });          
+        }})
         .catch(error => {
           console.error(error);
           // 处理上传失败的逻辑
         });
 
+      },
+      deleteFile(index,row){
+        let formData = {
+          "user_uuid" : "41e32018-8fd1-41f3-8b6a-d5ec340362ab",
+          "file_ids" : [this.fileTableData[index].file_id]
+                       }  
+        axios.post('/uf/delete', formData,{
+        headers : {
+          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+        }
+       })
+        .then(response => {
+          //成功处理 请求阿里云的地址
+          console.log(response);
+         
+        })
+        .catch(error => {
+          console.error(error);
+          // 处理上传失败的逻辑
+        });
+      },
+      handleCurrentChange(val) {
+        console.log(`当前页: ${val}`);
+        //查询用户文件
+      let formData = {
+    "user_uuid" : "41e32018-8fd1-41f3-8b6a-d5ec340362ab",
+    "page" : val,
+    "page_size":10
+}     
+       let vc = this;
+			axios.post('/uf/list', formData,{
+        headers : {
+          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+        }
+       })
+        .then(response => {
+            vc.fileTableData = response.data.data.file_list;
+
+        })
+        .catch(error => {
+          console.error(error);
+          // 处理上传失败的逻辑
+        });
+      },
+      multiDelete(){
+        console.log(this.$refs.multipleTable.selection);
+        let fileIds = []
+        for(let i = 0;i<this.$refs.multipleTable.selection.length;i++){
+           fileIds.push(this.$refs.multipleTable.selection[i].file_id)
+        }
+        let formData = {
+    "user_uuid" : "41e32018-8fd1-41f3-8b6a-d5ec340362ab",
+    "file_ids" : fileIds
+}     
+       let vc = this;
+			axios.post('/uf/delete', formData,{
+        headers : {
+          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+        }
+       })
+        .then(response => {
+          console.log(response);
+
+        })
+        .catch(error => {
+          console.error(error);
+          // 处理上传失败的逻辑
+        });
+      },
+      renameFile(){
+        let formData = {
+    "user_uuid" : "41e32018-8fd1-41f3-8b6a-d5ec340362ab",
+    "file_hash" : this.editingFile.file_hash,
+    "file_old_name" : this.editingFile.file_name,
+    "file_name" : this.editForm.file_name,
+}     
+       let vc = this;
+			axios.post('/uf/rename', formData,{
+        headers : {
+          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+        }
+       })
+        .then(response => {
+          console.log(response);
+          vc.dialogVisible =false;
+          alert("改名成功")
+
+        })
+        .catch(error => {
+          console.error(error);
+          // 处理上传失败的逻辑
+          vc.dialogVisible =false;
+          alert("改名失败")
+        });
+      },
+      handleFileUploadProgress(){
+        console.log("onprogress");
+      },
+      handleFileSuccess(){
+        console.log("onsuccess");
+      },
+      handleFileError(){
+        console.log("onerror");
       }
    
       },
@@ -569,6 +736,7 @@ import { v4 as uuidv4 } from 'uuid'
             // 在这里可以访问组件实例 vm
             console.log(vm);
             vm.fileTableData = response.data.data.file_list;
+            vm.filesTotal = response.data.data.count;
                });
         })
         .catch(error => {
@@ -592,8 +760,10 @@ import { v4 as uuidv4 } from 'uuid'
   float: right;
   margin-right: 10px;
  }
- .el-table{
+ el-table{
   margin-top: 5%;
+  background-color: aqua;
  }
+ 
 
 </style>
