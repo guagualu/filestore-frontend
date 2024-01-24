@@ -3,38 +3,19 @@
     通讯录组件
     
     <div class="add-friend">
-      <button @click="showAddFriendModal">添加好友</button>
-      <div v-if="showModal" class="modal">
-        <input type="text" v-model="searchKeyword" placeholder="输入好友姓名">
-        <button @click="searchFriend">搜索</button>
-        <div v-if="searchResult.length > 0">
-          <ul>
-            <li v-for="result in searchResult" :key="result.id">
-              {{ result.name }}
-              <button v-if="isNotFriend(result.id)" @click="addFriend(result.id)">添加</button>
-            </li>
-          </ul>
-        </div>
-        <div v-else>
-          暂无搜索结果
-        </div>
+      <button >添加好友</button>
+      <div  class="modal">
+        <input type="text" v-model="searchUserMobile" placeholder="输入好友手机号">
+        <button @click="addFriend">添加</button>
       </div>
     </div>
     <div class="friend-list">
-    <div class="friend-item" v-for="friend in friends" :key="friend.id">
-      <div class="friend-avatar">
-        <img :src="friend.avatar" alt="avatar">
-      </div>
+    <div class="friend-item" v-for="friend in friends" :key="friend.Id">
       <div class="friend-info">
-        <div class="friend-name">{{ friend.name }}</div>
-        <div class="friend-status">{{ friend.status }}</div>
+        <div class="friend-name">{{ friend.NickName }}</div>
       </div>
       <div class="friend-action">
-        <button @click="sendMessage(friend.id)">发送消息</button>
-      </div>
-
-      <div class="friend-action">
-        <button @click="deleteFriend(friend.id)">删除好友</button>
+        <button @click="sendMessage(friend.Uuid)">发送消息</button>
       </div>
     </div>
   </div>
@@ -43,6 +24,7 @@
 
 
 <script>
+import axios from 'axios';
   export default {
     name: 'addrBook',
     data : function(){
@@ -87,46 +69,115 @@
           status: '在线'
         }
       ],
-      showModal: false,
-      searchKeyword: '',
-      searchResult: []
+      searchUserMobile:''
       }
     },
     components : {},
     methods: {
-    sendMessage(friendId) {
-      // 发送消息给指定好友
-      console.log('发送消息给好友：', friendId)
-
-      //api查询是否有session 如果没有会话，那么后端需要新增会话
-
-      //此时前端获取的session会多一个（如果之前没有）
-      if( this.$route.path != '/home/im/session'){
-        this.$router.push(
-          {
-            name :'session',
-          }
-        )
+    async sendMessage(friendUuid) {
+      //先查找是否有session了
+      let params = {
+        user_a_uuid : '41e32018-8fd1-41f3-8b6a-d5ec340362ab',
+        user_b_uuid : friendUuid
       }
-      
+      let isExist = true 
+      await axios.get('/file/existSession',{
+        params:params,
+        headers : {
+          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+        }
+       })
+        .then(response => {
+            console.log(response);
+            isExist = response.data.data.is_exist
+            if(response.data.data.is_exist){
+              //路由到session组件 并且设置当前session
+            if( this.$route.path != '/home/im/session'){
+                this.$router.push(
+                {
+                  name :'session',
+                  params:{session:response.data.data.session_uuid}
+                })
+      }
+            }
+        })
+        .catch(error => {
+          console.error(error);
+          // 处理上传失败的逻辑
+        });
+      //创建session
+      if(isExist){
+        return 
+      }
+      let formData = new FormData()
+      formData.append("user_a_uuid",'41e32018-8fd1-41f3-8b6a-d5ec340362ab')//自己UUID
+      formData.append("user_b_uuid", friendUuid)
+      axios.post('/file/createSession', formData,{
+        headers : {
+          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+        }
+       })
+        .then(response => {
+            console.log(response);
+            //路由到session组件 并且设置当前session
+            if( this.$route.path != '/home/im/session'){
+                this.$router.push(
+                {
+                  name :'session',
+                  params:{session:response.data.data.session_uuid}
+                })
+      }
+        })
+        .catch(error => {
+          console.error(error);
+          // 处理上传失败的逻辑
+        });
     },
-    showAddFriendModal() {
-      this.showModal = true;
-    },
-    searchFriend() {
+    addFriend() {
       // 根据关键字搜索好友
       // 模拟搜索结果
-      this.searchResult = this.allUsers.filter(user => user.name.includes(this.searchKeyword));
+      let formData = new FormData()
+      formData.append("user_a_mobile",'17602357924')//自己的phone
+      formData.append("user_b_mobile",this.searchUserMobile)//自己的phone
+      axios.post('/user/add/friend', formData,{
+        headers : {
+          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+        }
+       })
+        .then(response => {
+          // 写入fileTableData
+            // 在这里可以访问组件实例 vm
+            console.log(response);
+        })
+        .catch(error => {
+          console.error(error);
+          // 处理上传失败的逻辑
+        });
     },
-    isNotFriend(id){
-      let tmp = this.friends.filter(friend => friend.id===id);
-      return tmp.length < 1
-    },
-    deleteFriend(id){
-      // 删除指定好友
-      console.log('删除好友：', friendId)
+  },
+    beforeRouteEnter(to, from, next){
+      let params = {
+        user_mobile : '17602357924'
+      }
+      axios.get('/user/get/friends', {params,
+        headers : {
+          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+        }
+       })
+        .then(response => {
+          // 写入fileTableData
+            // 在这里可以访问组件实例 vm
+            next(vm=>{
+              vm.friends=response.data.data.friends_infos;
+            }
+            )
+        })
+        .catch(error => {
+          console.error(error);
+          // 处理上传失败的逻辑
+        });
     }
-  }
+      
   }
 
 

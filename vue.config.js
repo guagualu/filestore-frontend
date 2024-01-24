@@ -21,7 +21,13 @@ module.exports = defineConfig({
             '/oss': {
                 target: 'http://file-store-gua.oss-cn-chengdu.aliyuncs.com',
                 changeOrigin: true,
-            }
+            },
+            // '/ws': {
+            //     target: 'ws://localhost:8082/chat',
+            //     changeOrigin: true,
+            //     ws: true,
+            //     pathRewrite: { '^/ws': '' }
+            // }
         }
     }
 })
