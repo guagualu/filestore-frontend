@@ -101,10 +101,16 @@ router.beforeEach((to, from, next) => {
         next()
         return
     }
-    if (JwtService.isAuthenticated()) { //判断是否需要鉴权
+    if (JwtService.isAuthenticated()) { //判断token信息
         next()
+        return;
     } else {
         alert('未登录,请先登录！')
+            //跳转至登录界面
+        router.push({
+            name: "login",
+        });
+        return;
     }
 })
 

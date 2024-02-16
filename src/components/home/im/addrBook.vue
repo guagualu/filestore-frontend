@@ -84,7 +84,7 @@ import axios from 'axios';
       await axios.get('/file/existSession',{
         params:params,
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {
@@ -114,7 +114,7 @@ import axios from 'axios';
       formData.append("user_b_uuid", friendUuid)
       axios.post('/file/createSession', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {
@@ -141,7 +141,7 @@ import axios from 'axios';
       formData.append("user_b_mobile",this.searchUserMobile)//自己的phone
       axios.post('/user/add/friend', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {
@@ -161,7 +161,7 @@ import axios from 'axios';
       }
       axios.get('/user/get/friends', {params,
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {

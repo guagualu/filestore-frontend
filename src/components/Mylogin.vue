@@ -48,7 +48,10 @@ import carouselChart from './carouselChart.vue'
         .then(response => {
           console.log(response.data);
           // 处理上传成功的逻辑
-          JwtService.saveToken(response.data.data)
+          //保存token
+          JwtService.saveToken(response.data.data.token)
+          //保存用户uuid
+          localStorage.setItem('user_uuid', response.data.data.user_uuid);
           if (this.$route.path !== '/home/index') {
           this.$router.push({
           name : "index",

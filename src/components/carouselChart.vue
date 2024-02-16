@@ -186,19 +186,31 @@ li {
 	background-color: black !important; 
 }
 
-	/* 进入的起点、离开的终点 */
+	/* 进入的起点、离开的终点
 	.hello-enter{
 		transform: translateX(-100%);
 	}
 	.hello-leave-to{
 		transform: translateX(100%);
+	} */
+	@keyframes mySwitch{
+       from{
+		transform: translateX(-100%);
+	   }
+	   to{
+		transform: translateX(0px);
+	   }
+
 	}
-	.hello-enter-active,.hello-leave-active{
-		transition: 1s linear;
+	.hello-enter-active{
+		transition: mySwitch 0.5s linear;
 	}
-	/* 进入的终点、离开的起点 */
+	.hello-leave-active{
+		transition: mySwitch 0.5s linear reverse;
+	}
+	/* 进入的终点、离开的起点
 	.hello-enter-to,.hello-leave{
 		transform: translateX(0%);
-	}
+	} */
 	
 </style>

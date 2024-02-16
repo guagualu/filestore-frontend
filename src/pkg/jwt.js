@@ -1,4 +1,6 @@
 const TOKEN_KEY = 'jwt-token';
+// 设置登录过期时间（七天） 86400000 * 7
+let EXPIRESTIME = 86400000 * 7
 
 export default {
     getToken() {
@@ -7,7 +9,10 @@ export default {
 
     saveToken(token) {
         localStorage.setItem(TOKEN_KEY, token);
+        let date = new Date().getTime();
+        localStorage.setItem('token-time', date);
     },
+
 
     destroyToken() {
         localStorage.removeItem(TOKEN_KEY);
@@ -15,7 +20,17 @@ export default {
 
     isAuthenticated() {
         const token = this.getToken();
-        return token !== null && token !== "";
+        //如果token不存在 
+        if (token === null || token == '') {
+            return false;
+        }
+        //如果过期
+        let date = new Date().getTime();
+        if (date - localStorage.getItem('token-time') > EXPIRESTIME) {
+            console.log('test', date - localStorage.getItem('token-time'))
+            return false;
+        }
+        return true;
     },
 
     login(credentials) {

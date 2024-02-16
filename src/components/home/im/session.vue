@@ -151,14 +151,14 @@
         //获取我的文件列表
         //查询用户文件
       let formData = {
-    "user_uuid" : "41e32018-8fd1-41f3-8b6a-d5ec340362ab",
+    "user_uuid" : localStorage.getItem('user_uuid'),
     "page" : 1,
     "page_size":5
 }
      const vm = this;
 			axios.post('/uf/list', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {
@@ -178,14 +178,14 @@
         console.log(`当前页: ${val}`);
         //查询用户文件
       let formData = {
-    "user_uuid" : "41e32018-8fd1-41f3-8b6a-d5ec340362ab",
+    "user_uuid" : localStorage.getItem('user_uuid'),
     "page" : val,
     "page_size":5
 }     
        let vc = this;
 			axios.post('/uf/list', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {
@@ -229,7 +229,7 @@
     }
     axios.get('/file/getASessionInfo', {params,
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {          
@@ -244,7 +244,7 @@
           console.error(error);
           // 处理上传失败的逻辑
         });
-    let sendUserUuid = "41e32018-8fd1-41f3-8b6a-d5ec340362ab"
+    let sendUserUuid = localStorage.getItem('user_uuid')
     this.nowSessionSend.session_uuid = sessionId
     this.nowSessionSend.send_user_uuid = sendUserUuid
     this.nowSessionSend.to_user_uuid = chatToUuid
@@ -320,7 +320,7 @@
       formData.append("file_name",m.message_content.file_name)
       axios.post('/uf/create', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {
@@ -381,13 +381,13 @@
 		async beforeRouteEnter (to, from, next) {
       //查询用户session
       let params = {
-    "user_uuid" : "41e32018-8fd1-41f3-8b6a-d5ec340362ab",
+    "user_uuid" : localStorage.getItem('user_uuid'),
 }    
       let firstSessionUuid = ''
       let conversations = []
 			await axios.get('/file/getUserAllSession', {params,
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {
@@ -413,7 +413,7 @@
     console.log(params)
     axios.get('/file/getASessionInfo', {params,
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {

@@ -275,7 +275,7 @@ import { v4 as uuidv4 } from 'uuid'
       let retryfileChunks;
       await axios.post('/file/upload/retry/init', initformData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {
@@ -296,10 +296,10 @@ import { v4 as uuidv4 } from 'uuid'
         formData.append("file_size",fileSize);
         formData.append("chunk_count",chunkCount);
         formData.append("file_name",fileName)
-        formData.append('user_uuid',"41e32018-8fd1-41f3-8b6a-d5ec340362ab");
+        formData.append('user_uuid',localStorage.getItem('user_uuid'));
        axios.post('/file/upload/completed', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {
@@ -328,7 +328,7 @@ import { v4 as uuidv4 } from 'uuid'
        console.log(fileChunks,retryfileChunks,fileChunks[retryfileChunks[i]])
        await axios.post('/file/upload/mp', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
           "upload_id": uploadId,
           "chunk_index" :  retryfileChunks[i],
           "content-Type" : "multipart/form-data"
@@ -371,12 +371,12 @@ import { v4 as uuidv4 } from 'uuid'
 
       const formData = new FormData();
        formData.append("file",file);
-       formData.append('user_uuid',"41e32018-8fd1-41f3-8b6a-d5ec340362ab");
+       formData.append('user_uuid',localStorage.getItem('user_uuid'));
        this.showProgress = true
        let res =false
        await axios.post('/file/upload', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
           "content-Type" : "multipart/form-data"
         }
        })
@@ -406,7 +406,7 @@ import { v4 as uuidv4 } from 'uuid'
           "chunk_count" : chunkCount
         },
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
       }
        )
@@ -430,11 +430,11 @@ import { v4 as uuidv4 } from 'uuid'
         formData.append("upload_id",uploadId);
         formData.append("file_size",fileSize);
         formData.append("chunk_count",chunkCount);
-        formData.append('user_uuid',"41e32018-8fd1-41f3-8b6a-d5ec340362ab");
+        formData.append('user_uuid',localStorage.getItem('user_uuid'));
         formData.append('file_name',file.name);
         axios.post('/file/upload/completed', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {
@@ -459,7 +459,7 @@ import { v4 as uuidv4 } from 'uuid'
        formData.append("file",fileChunks[i]);
        await axios.post('/file/upload/mp', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
           "upload_id": uploadId,
           "chunk_index" :  i+1,
           "content-Type" : "multipart/form-data"
@@ -481,11 +481,11 @@ import { v4 as uuidv4 } from 'uuid'
         formData.append("upload_id",uploadId);
         formData.append("file_size",fileSize);
         formData.append("chunk_count",chunkCount);
-        formData.append('user_uuid',"41e32018-8fd1-41f3-8b6a-d5ec340362ab");
+        formData.append('user_uuid',localStorage.getItem('user_uuid'));
         formData.append('file_name',file.name);
         await axios.post('/file/upload/completed', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {
@@ -525,11 +525,11 @@ import { v4 as uuidv4 } from 'uuid'
       const formData = new FormData();
        formData.append("file_hash",fileHash);
        formData.append("file_name",fileName);
-       formData.append('user_uuid',"41e32018-8fd1-41f3-8b6a-d5ec340362ab");
+       formData.append('user_uuid',localStorage.getItem('user_uuid'));
        let reqRes = false
        await axios.post('/file/fast/upload', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {
@@ -563,11 +563,11 @@ import { v4 as uuidv4 } from 'uuid'
         let formData = {
     "file_name": row.file_name,
     "file_hash" : row.file_hash,
-    "user_uuid" : "41e32018-8fd1-41f3-8b6a-d5ec340362ab"
+    "user_uuid" : localStorage.getItem('user_uuid')
 }
         axios.post('/file/download', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {
@@ -582,7 +582,7 @@ import { v4 as uuidv4 } from 'uuid'
        responseType: "blob", //收到的数据为blob,
        data : formData,
        headers :{
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
      }).then(response => {
             const blob = new Blob([response.data], { type: response.headers["content-type"] });
@@ -614,12 +614,12 @@ import { v4 as uuidv4 } from 'uuid'
       },
       deleteFile(index,row){
         let formData = {
-          "user_uuid" : "41e32018-8fd1-41f3-8b6a-d5ec340362ab",
+          "user_uuid" : localStorage.getItem('user_uuid'),
           "file_ids" : [this.fileTableData[index].file_id]
                        }  
         axios.post('/uf/delete', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {
@@ -636,14 +636,14 @@ import { v4 as uuidv4 } from 'uuid'
         console.log(`当前页: ${val}`);
         //查询用户文件
       let formData = {
-    "user_uuid" : "41e32018-8fd1-41f3-8b6a-d5ec340362ab",
+    "user_uuid" : localStorage.getItem('user_uuid'),
     "page" : val,
     "page_size":10
 }     
        let vc = this;
 			axios.post('/uf/list', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {
@@ -662,13 +662,13 @@ import { v4 as uuidv4 } from 'uuid'
            fileIds.push(this.$refs.multipleTable.selection[i].file_id)
         }
         let formData = {
-    "user_uuid" : "41e32018-8fd1-41f3-8b6a-d5ec340362ab",
+    "user_uuid" : localStorage.getItem('user_uuid'),
     "file_ids" : fileIds
 }     
        let vc = this;
 			axios.post('/uf/delete', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {
@@ -682,7 +682,7 @@ import { v4 as uuidv4 } from 'uuid'
       },
       renameFile(){
         let formData = {
-    "user_uuid" : "41e32018-8fd1-41f3-8b6a-d5ec340362ab",
+    "user_uuid" : localStorage.getItem('user_uuid'),
     "file_hash" : this.editingFile.file_hash,
     "file_old_name" : this.editingFile.file_name,
     "file_name" : this.editForm.file_name,
@@ -690,7 +690,7 @@ import { v4 as uuidv4 } from 'uuid'
        let vc = this;
 			axios.post('/uf/rename', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {
@@ -721,13 +721,13 @@ import { v4 as uuidv4 } from 'uuid'
 		beforeRouteEnter (to, from, next) {
       //查询用户文件
       let formData = {
-    "user_uuid" : "41e32018-8fd1-41f3-8b6a-d5ec340362ab",
+    "user_uuid" : localStorage.getItem('user_uuid'),
     "page" : 1,
     "page_size":10
 }
 			axios.post('/uf/list', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {

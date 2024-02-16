@@ -96,14 +96,14 @@ import axios from 'axios';
         console.log(`当前页: ${val}`);
         //查询用户文件
       let formData = {
-    "user_uuid" : "41e32018-8fd1-41f3-8b6a-d5ec340362ab",
+    "user_uuid" : localStorage.getItem('user_uuid'),
     "page" : val,
     "page_size":10
 }     
        let vc = this;
 			axios.post('/uf/clash/list', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {
@@ -118,13 +118,13 @@ import axios from 'axios';
       },
       recover(index,row){
         let formData = {
-          "user_uuid" : "41e32018-8fd1-41f3-8b6a-d5ec340362ab",
+          "user_uuid" : localStorage.getItem('user_uuid'),
           "file_ids" : [this.fileTableData[index].file_id]
                        }  
        let vc = this;
 			axios.post('/uf/clash/recover', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {
@@ -137,13 +137,13 @@ import axios from 'axios';
       },
       realDelete(index,row){
         let formData = {
-          "user_uuid" : "41e32018-8fd1-41f3-8b6a-d5ec340362ab",
+          "user_uuid" : localStorage.getItem('user_uuid'),
           "file_ids" : [this.fileTableData[index].file_id]
                        }  
        let vc = this;
 			axios.post('/uf/clash/delete', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {
@@ -161,13 +161,13 @@ import axios from 'axios';
            fileIds.push(this.$refs.multipleTable.selection[i].file_id)
         }
         let formData = {
-    "user_uuid" : "41e32018-8fd1-41f3-8b6a-d5ec340362ab",
+    "user_uuid" : localStorage.getItem('user_uuid'),
     "file_ids" : fileIds
 }     
        let vc = this;
 			axios.post('/uf/clash/delete', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {
@@ -186,13 +186,13 @@ import axios from 'axios';
            fileIds.push(this.$refs.multipleTable.selection[i].file_id)
         }
         let formData = {
-    "user_uuid" : "41e32018-8fd1-41f3-8b6a-d5ec340362ab",
+    "user_uuid" : localStorage.getItem('user_uuid'),
     "file_ids" : fileIds
 }     
        let vc = this;
 			axios.post('/uf/clash/recover', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {
@@ -210,13 +210,13 @@ import axios from 'axios';
 		beforeRouteEnter (to, from, next) {
       //查询用户文件
       let formData = {
-    "user_uuid" : "41e32018-8fd1-41f3-8b6a-d5ec340362ab",
+    "user_uuid" : localStorage.getItem('user_uuid'),
     "page" : 1,
     "page_size":10
 }
 			axios.post('/uf/clash/list', formData,{
         headers : {
-          "Authorization" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyVXVpZCI6IjQxZTMyMDE4LThmZDEtNDFmMy04YjZhLWQ1ZWMzNDAzNjJhYiIsImlzcyI6Imd1YSJ9.kW_8yBnhAiVmoyIquHFPymo4s_wxH8dC9LXZvUsTWsg",
+          "Authorization" : localStorage.getItem('jwt-token'),
         }
        })
         .then(response => {
